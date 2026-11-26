@@ -77,12 +77,13 @@ export function CheckoutForm() {
       if (!response.ok || !data.order) {
         throw new Error(data.error || "La commande n'a pas pu être enregistrée.");
       }
+      const order = data.order as { id: string };
       sessionStorage.setItem("cryptshop:last-order", JSON.stringify(data.order));
       if (data.accountToken) {
         sessionStorage.setItem("cryptshop:last-account-token", data.accountToken);
       }
       clear();
-      router.push("/commande/confirmation");
+      router.push(`/paiement/${order.id}`);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Une erreur est survenue.");
       setLoading(false);

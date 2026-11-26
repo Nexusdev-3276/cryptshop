@@ -8,7 +8,7 @@ import { notifyOrder } from "@/lib/notify";
 import { saveOrder } from "@/lib/upstash";
 import { kvGet, kvSet, listPush, randomToken, hashToken } from "@/lib/store";
 import { getSessionAccountHash, createAccountSession, SESSION_COOKIE, SESSION_TTL } from "@/lib/auth";
-import type { CountryCode, CryptoCode, Customer, OrderItem, PlacedOrder } from "@/lib/types";
+import type { CountryCode, CryptoCode, Customer, OrderItem, PlacedOrder, PaymentStatus } from "@/lib/types";
 
 const DECIMALS: Record<CryptoCode, number> = { BTC: 8, ETH: 6, SOL: 6 };
 const WALLETS: Record<CryptoCode, string | undefined> = {
@@ -16,6 +16,8 @@ const WALLETS: Record<CryptoCode, string | undefined> = {
   ETH: process.env.ETH_ADDRESS,
   SOL: process.env.SOL_ADDRESS,
 };
+
+const PAYMENT_TIMEOUT_MINUTES = 60;
 
 const hits = new Map<string, number[]>();
 
@@ -39,6 +41,10 @@ function paymentUri(code: CryptoCode, address: string, amount: number): string {
   if (code === "BTC") return `bitcoin:${address}?amount=${amount}`;
   if (code === "SOL") return `solana:${address}?amount=${amount}`;
   return `ethereum:${address}`;
+}
+
+function expiresAtFromNow(minutes: number): string {
+  return new Date(Date.now() + minutes * 60 * 1000).toISOString();
 }
 
 export async function POST(request: Request) {
@@ -135,6 +141,7 @@ export async function POST(request: Request) {
 
   const wallet = WALLETS[payment]?.trim() || null;
   const id = `CS-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  const expiresAt = expiresAtFromNow(PAYMENT_TIMEOUT_MINUTES);
 
   const order: PlacedOrder = {
     id,
@@ -151,6 +158,8 @@ export async function POST(request: Request) {
       address: wallet,
       uri: wallet ? paymentUri(payment, wallet, amount) : null,
       rate,
+      status: "pending" as PaymentStatus,
+      expiresAt,
     },
   };
 

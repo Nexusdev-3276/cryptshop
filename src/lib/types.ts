@@ -58,6 +58,8 @@ export type Customer = {
   note?: string;
 };
 
+export type PaymentStatus = "pending" | "paid" | "expired";
+
 export type PlacedOrder = {
   id: string;
   createdAt: string;
@@ -73,5 +75,8 @@ export type PlacedOrder = {
     address: string | null;
     uri: string | null;
     rate: number;
+    status: PaymentStatus;
+    expiresAt: string;
+    txHash?: string;
   };
 };

@@ -10,7 +10,7 @@ type Order = {
   customer: { firstName: string; lastName: string; email: string; phone: string };
   items: { name: string; qty: number; line: number }[];
   total: number;
-  payment: { currency: string; amount: number; address: string | null };
+  payment: { currency: string; amount: number; address: string | null; status?: string; expiresAt?: string };
 };
 
 type ChatMsg = { id: string; role: string; text: string; createdAt: string };
@@ -115,6 +115,52 @@ export function AdminDashboard() {
                     <td>{order.total.toFixed(2)} €</td>
                     <td>
                       {order.payment.amount} {order.payment.currency}
+                    </td>
+                    <td>
+                      <span
+                        className={
+                          order.payment.status === "paid"
+                            ? "chip active"
+                            : order.payment.status === "expired"
+                            ? "chip"
+                            : "chip"
+                        }
+                        style={{
+                          background:
+                            order.payment.status === "paid"
+                              ? "#e8f5e9"
+                              : order.payment.status === "expired"
+                              ? "#fbe9e7"
+                              : "#fff3e0",
+                          color:
+                            order.payment.status === "paid"
+                              ? "#2e7d32"
+                              : order.payment.status === "expired"
+                              ? "#c62828"
+                              : "#e65100",
+                        }}
+                      >
+                        {order.payment.status === "paid"
+                          ? "✅ Payé"
+                          : order.payment.status === "expired"
+                          ? "❌ Expiré"
+                          : "⏳ En attente"}
+                      </span>
+                    </td>
+                    <td>
+                      {order.payment.status === "pending" ? (
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          style={{ fontSize: 11, padding: "4px 8px" }}
+                          onClick={async () => {
+                            await fetch(`/api/admin/orders/${order.id}/pay`, { method: "POST" });
+                            load();
+                          }}
+                        >
+                          Marquer payé
+                        </button>
+                      ) : null}
                     </td>
                   </tr>
                 ))}
