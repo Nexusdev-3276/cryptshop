@@ -20,7 +20,7 @@ export const products: Product[] = [
       { label: "Contenu", value: "Manette, câble USB-C, notice" },
       { label: "Garantie", value: "2 ans" },
     ],
-    image: "/images/products/dualsense-ps5.jpg",
+    image: "/images/products/dualsense-ps5.png",
   },
   {
     slug: "dualsense-edge",
