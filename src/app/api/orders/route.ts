@@ -117,11 +117,12 @@ export async function POST(request: Request) {
     !customer.lastName ||
     !customer.address ||
     !customer.postalCode ||
-    !customer.city ||
-    !customer.phone ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(customer.email)
+    !customer.city
   ) {
     return NextResponse.json({ error: "Coordonnées incomplètes ou invalides." }, { status: 400 });
+  }
+  if (customer.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(customer.email)) {
+    return NextResponse.json({ error: "Adresse e-mail invalide." }, { status: 400 });
   }
 
   const shipping = round2(shippingFor(subtotal, country));

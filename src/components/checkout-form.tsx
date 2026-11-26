@@ -118,12 +118,12 @@ export function CheckoutForm() {
               <input value={form.lastName} onChange={update("lastName")} required autoComplete="family-name" maxLength={60} />
             </label>
             <label className="field">
-              <span>E-mail</span>
-              <input type="email" value={form.email} onChange={update("email")} required autoComplete="email" maxLength={120} />
+              <span>E-mail (optionnel)</span>
+              <input type="email" value={form.email} onChange={update("email")} autoComplete="email" maxLength={120} />
             </label>
             <label className="field">
-              <span>Téléphone</span>
-              <input type="tel" value={form.phone} onChange={update("phone")} required autoComplete="tel" maxLength={40} />
+              <span>Téléphone (optionnel)</span>
+              <input type="tel" value={form.phone} onChange={update("phone")} autoComplete="tel" maxLength={40} />
             </label>
           </div>
         </section>

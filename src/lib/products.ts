@@ -237,6 +237,46 @@ export const products: Product[] = [
     image: "/images/products/steam-card-20.png",
     note: "Le code est transmis manuellement après confirmation du paiement. Conservez votre référence de commande.",
   },
+  {
+    slug: "steam-card-50",
+    name: "Carte cadeau Steam 50 €",
+    brand: "Steam",
+    category: "cartes",
+    platform: "PC · Mac · Linux",
+    price: 50,
+    stock: 99,
+    tagline: "Crédit Steam de 50 €, livré par chat après paiement.",
+    description:
+      "Carte cadeau Steam d'une valeur de 50 €. Après validation et paiement en crypto, le code est transmis via le chat sécurisé de votre compte.",
+    specs: [
+      { label: "Valeur", value: "50 € de crédit Steam" },
+      { label: "Livraison", value: "Code envoyé via chat sécurisé" },
+      { label: "Compatibilité", value: "PC, Mac, Linux, Steam Deck" },
+      { label: "Validité", value: "Aucune expiration" },
+    ],
+    image: "/images/products/steam-card-20.png",
+    note: "Le code est transmis manuellement après confirmation du paiement.",
+  },
+  {
+    slug: "steam-card-100",
+    name: "Carte cadeau Steam 100 €",
+    brand: "Steam",
+    category: "cartes",
+    platform: "PC · Mac · Linux",
+    price: 100,
+    stock: 99,
+    tagline: "Crédit Steam de 100 €, livré par chat après paiement.",
+    description:
+      "Carte cadeau Steam d'une valeur de 100 €. Après validation et paiement en crypto, le code est transmis via le chat sécurisé de votre compte.",
+    specs: [
+      { label: "Valeur", value: "100 € de crédit Steam" },
+      { label: "Livraison", value: "Code envoyé via chat sécurisé" },
+      { label: "Compatibilité", value: "PC, Mac, Linux, Steam Deck" },
+      { label: "Validité", value: "Aucune expiration" },
+    ],
+    image: "/images/products/steam-card-20.png",
+    note: "Le code est transmis manuellement après confirmation du paiement.",
+  },
 ];
 
 export const CATEGORIES = [

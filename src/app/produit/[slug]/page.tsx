@@ -80,6 +80,27 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <CryptoPrices eur={product.price} />
           <p className="crypto-note">Montants indicatifs, recalculés au moment du paiement.</p>
 
+          {product.category === "cartes" ? (
+            <div className="product-details-inline">
+              <h2>Choisir un montant</h2>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {[
+                  { slug: "steam-card-20", label: "20 €" },
+                  { slug: "steam-card-50", label: "50 €" },
+                  { slug: "steam-card-100", label: "100 €" },
+                ].map((item) => (
+                  <Link
+                    key={item.slug}
+                    href={`/produit/${item.slug}`}
+                    className={product.slug === item.slug ? "chip active" : "chip"}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
           <div className="product-details-inline">
             <h2>À propos de cet article</h2>
             <ul className="bullet-list">

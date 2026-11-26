@@ -20,7 +20,7 @@ export function ProductPurchase({ product }: { product: Product }) {
 
   function buyNow() {
     add(product.slug, qty);
-    router.push("/panier");
+    router.push("/commande");
   }
 
   return (
