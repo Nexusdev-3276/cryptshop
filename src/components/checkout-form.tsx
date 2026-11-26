@@ -73,11 +73,14 @@ export function CheckoutForm() {
           payment,
         }),
       });
-      const data = (await response.json()) as { order?: unknown; error?: string };
+      const data = (await response.json()) as { order?: unknown; accountToken?: string; error?: string };
       if (!response.ok || !data.order) {
         throw new Error(data.error || "La commande n'a pas pu être enregistrée.");
       }
       sessionStorage.setItem("cryptshop:last-order", JSON.stringify(data.order));
+      if (data.accountToken) {
+        sessionStorage.setItem("cryptshop:last-account-token", data.accountToken);
+      }
       clear();
       router.push("/commande/confirmation");
     } catch (cause) {

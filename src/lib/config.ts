@@ -11,7 +11,9 @@ export const SITE = {
 export const NAV = [
   { href: "/boutique", label: "Boutique" },
   { href: "/boutique?categorie=pc", label: "PC assemblés" },
+  { href: "/boutique?categorie=cartes", label: "Cartes Steam" },
   { href: "/livraison", label: "Livraison" },
   { href: "/paiement", label: "Paiement crypto" },
+  { href: "/compte", label: "Compte" },
   { href: "/contact", label: "Contact" },
 ];

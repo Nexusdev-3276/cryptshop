@@ -1,4 +1,4 @@
-export type Category = "manettes" | "pc" | "scooters";
+export type Category = "manettes" | "pc" | "scooters" | "cartes";
 
 export type Product = {
   slug: string;

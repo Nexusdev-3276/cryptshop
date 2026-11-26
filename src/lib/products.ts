@@ -215,6 +215,28 @@ export const products: Product[] = [
     note: "Sans système d'exploitation. Installation de Windows 11 possible sur demande.",
     image: "/images/products/pc-orion.jpg",
   },
+  {
+    slug: "steam-card-20",
+    name: "Carte cadeau Steam 20 €",
+    brand: "Steam",
+    category: "cartes",
+    platform: "PC · Mac · Linux",
+    price: 20,
+    stock: 99,
+    featured: true,
+    tagline: "Crédit Steam de 20 €, livré par chat après paiement.",
+    description:
+      "Carte cadeau Steam d'une valeur de 20 €. Après validation et paiement en crypto, le code est transmis via le chat sécurisé de votre compte. Aucune livraison physique : le code est envoyé directement.",
+    specs: [
+      { label: "Valeur", value: "20 € de crédit Steam" },
+      { label: "Livraison", value: "Code envoyé via chat sécurisé" },
+      { label: "Compatibilité", value: "PC, Mac, Linux, Steam Deck" },
+      { label: "Validité", value: "Aucune expiration" },
+      { label: "Garantie", value: "Code vérifié avant envoi" },
+    ],
+    image: "/images/products/steam-card-20.png",
+    note: "Le code est transmis manuellement après confirmation du paiement. Conservez votre référence de commande.",
+  },
 ];
 
 export const CATEGORIES = [
@@ -222,6 +244,7 @@ export const CATEGORIES = [
   { id: "manettes", label: "Manettes" },
   { id: "pc", label: "PC assemblés" },
   { id: "scooters", label: "Trottinettes" },
+  { id: "cartes", label: "Cartes cadeaux" },
 ] as const;
 
 export function getProduct(slug: string): Product | undefined {

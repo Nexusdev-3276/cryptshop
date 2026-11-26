@@ -6,6 +6,7 @@ import { COUNTRIES } from "@/lib/currency";
 import { formatMoney } from "@/lib/format";
 import type { PlacedOrder } from "@/lib/types";
 import { useShop } from "./shop-provider";
+import { Chat } from "./chat";
 
 const NETWORKS = { BTC: "Bitcoin", ETH: "Ethereum", SOL: "Solana" } as const;
 
@@ -15,11 +16,14 @@ export function Confirmation() {
   const [loaded, setLoaded] = useState(false);
   const [qr, setQr] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [accountToken, setAccountToken] = useState<string | null>(null);
 
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem("cryptshop:last-order");
       if (raw) setOrder(JSON.parse(raw) as PlacedOrder);
+      const token = sessionStorage.getItem("cryptshop:last-account-token");
+      if (token) setAccountToken(token);
     } catch {
       setOrder(null);
     }
@@ -221,6 +225,29 @@ export function Confirmation() {
           ) : null}
         </section>
       </div>
+
+      {accountToken ? (
+        <section className="order-panel" style={{ marginTop: 20 }}>
+          <h2>Votre compte sécurisé</h2>
+          <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 10 }}>
+            Conservez ce code : il vous permet d'accéder à vos commandes et au chat avec le vendeur.
+            Aucun mot de passe n'est stocké.
+          </p>
+          <div className="copy-field">
+            <span>Code d'accès</span>
+            <code>{accountToken}</code>
+            <button
+              type="button"
+              className="copy-button"
+              onClick={() => copy(accountToken, "token")}
+            >
+              {copied === "token" ? "Copié" : "Copier"}
+            </button>
+          </div>
+        </section>
+      ) : null}
+
+      {order ? <Chat orderId={order.id} /> : null}
 
       <div className="confirm-actions">
         <button type="button" className="btn btn-outline" onClick={() => window.print()}>

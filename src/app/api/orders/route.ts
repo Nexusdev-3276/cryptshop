@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { getProduct } from "@/lib/products";
 import { COUNTRIES } from "@/lib/currency";
 import { getRates } from "@/lib/rates";
 import { shippingFor } from "@/lib/format";
 import { notifyOrder } from "@/lib/notify";
 import { saveOrder } from "@/lib/upstash";
+import { kvGet, kvSet, listPush, randomToken, hashToken } from "@/lib/store";
+import { getSessionAccountHash, createAccountSession, SESSION_COOKIE, SESSION_TTL } from "@/lib/auth";
 import type { CountryCode, CryptoCode, Customer, OrderItem, PlacedOrder } from "@/lib/types";
 
 const DECIMALS: Record<CryptoCode, number> = { BTC: 8, ETH: 6, SOL: 6 };
@@ -150,7 +153,34 @@ export async function POST(request: Request) {
     },
   };
 
+  // Link to account (existing session or create one for guest)
+  let accountToken: string | null = null;
+  let accountHash = await getSessionAccountHash();
+  if (!accountHash) {
+    accountToken = randomToken(32);
+    accountHash = hashToken(accountToken);
+    await kvSet(`account:${accountHash}`, { createdAt: new Date().toISOString(), orders: [order.id] });
+    const sessionId = await createAccountSession(accountHash);
+    const cookieStore = await cookies();
+    cookieStore.set(SESSION_COOKIE, sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: SESSION_TTL,
+      path: "/",
+    });
+  } else {
+    const account = await kvGet<{ createdAt: string; orders: string[] }>(`account:${accountHash}`);
+    const orders = account?.orders ?? [];
+    if (!orders.includes(order.id)) orders.push(order.id);
+    await kvSet(`account:${accountHash}`, { createdAt: account?.createdAt ?? new Date().toISOString(), orders });
+  }
+
+  await kvSet(`order:${order.id}`, { ...order, accountHash });
+  await listPush("orders", order.id);
+  await kvSet(`orderAccount:${order.id}`, accountHash);
+
   await Promise.allSettled([notifyOrder(order), saveOrder(order)]);
 
-  return NextResponse.json({ order });
+  return NextResponse.json({ order, accountToken });
 }
