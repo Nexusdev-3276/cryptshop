@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { COUNTRIES, COUNTRY_LIST, CRYPTO_CODES } from "@/lib/currency";
-import { formatCrypto, formatMoney } from "@/lib/format";
+import { formatCrypto, formatMoney, shippingFor } from "@/lib/format";
 import type { CountryCode } from "@/lib/types";
 import { useShop } from "./shop-provider";
 import { ProductMedia } from "./product-media";
@@ -54,6 +54,12 @@ export function CartView() {
               <Link href={`/produit/${line.slug}`} className="cart-line-name">
                 {line.product.name}
               </Link>
+              <p className="cart-line-stock">En stock</p>
+              <p className="cart-line-ship">
+                {shippingFor(line.line, country) === 0
+                  ? "Livraison GRATUITE"
+                  : `Livraison ${formatMoney(shippingFor(line.line, country), country, rates)}`}
+              </p>
               <div className="cart-line-actions">
                 <div className="qty">
                   <button

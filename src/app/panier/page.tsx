@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { CartView } from "@/components/cart-view";
 
 export const metadata: Metadata = {
@@ -9,6 +10,11 @@ export const metadata: Metadata = {
 export default function CartPage() {
   return (
     <div className="container page">
+      <nav className="breadcrumb" aria-label="Fil d'Ariane">
+        <Link href="/">Accueil</Link>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Panier</span>
+      </nav>
       <header className="page-head">
         <p className="eyebrow">Panier</p>
         <h1>Votre panier</h1>

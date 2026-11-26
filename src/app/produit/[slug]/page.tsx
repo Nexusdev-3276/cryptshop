@@ -36,15 +36,15 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   const related = products
     .filter((item) => item.category === product.category && item.slug !== product.slug)
-    .slice(0, 3);
+    .slice(0, 4);
 
   return (
-    <div className="container page">
+    <div className="container page product-page">
       <nav className="breadcrumb" aria-label="Fil d'Ariane">
         <Link href="/">Accueil</Link>
-        <span aria-hidden="true">/</span>
+        <span aria-hidden="true">›</span>
         <Link href="/boutique">Boutique</Link>
-        <span aria-hidden="true">/</span>
+        <span aria-hidden="true">›</span>
         <span aria-current="page">{product.name}</span>
       </nav>
 
@@ -52,36 +52,61 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="product-visual">
           <ProductMedia src={product.image} name={product.name} brand={product.brand} />
           <p className="product-visual-note">
-            Produit neuf, dans son emballage d'origine. Photos non contractuelles.
+            Produit neuf, dans son emballage d&apos;origine. Photos non contractuelles.
           </p>
         </div>
 
         <div className="product-info">
-          <p className="eyebrow">
-            {product.brand} — {product.platform}
+          <p className="product-brand">
+            Marque : <strong>{product.brand}</strong>
           </p>
           <h1>{product.name}</h1>
           <p className="product-lead">{product.tagline}</p>
 
+          <div className="product-badges">
+            <span>Neuf</span>
+            <span>Emballage d&apos;origine</span>
+            <span>Facture fournie</span>
+            <span>Garantie 2 ans</span>
+          </div>
+
+          <hr className="rule" />
+
           <div className="product-price-block">
             <Price eur={product.price} crypto={false} size="lg" />
-            <span className={product.stock > 0 ? "stock stock-ok" : "stock"}>
-              {product.stock > 0 ? `En stock — ${product.stock} disponible${product.stock > 1 ? "s" : ""}` : "Sur commande"}
-            </span>
+            <span className="price-tax">TTC</span>
           </div>
 
           <CryptoPrices eur={product.price} />
           <p className="crypto-note">Montants indicatifs, recalculés au moment du paiement.</p>
 
-          <ProductPurchase product={product} />
-          <DeliveryEstimate price={product.price} />
-
-          <ul className="assurance-list">
-            <li>Garantie 2 ans, facture fournie</li>
-            <li>Paiement en Bitcoin, Ethereum ou Solana</li>
-            <li>Expédition depuis la Belgique avec suivi</li>
-          </ul>
+          <div className="product-details-inline">
+            <h2>À propos de cet article</h2>
+            <ul className="bullet-list">
+              {product.specs.slice(0, 5).map((spec) => (
+                <li key={spec.label}>
+                  <strong>{spec.label} :</strong> {spec.value}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
+
+        <aside className="buybox">
+          <Price eur={product.price} size="lg" />
+          <p className={product.stock > 0 ? "buybox-stock" : "stock"}>
+            {product.stock > 0
+              ? `En stock — ${product.stock} disponible${product.stock > 1 ? "s" : ""}`
+              : "Sur commande"}
+          </p>
+          <DeliveryEstimate price={product.price} />
+          <ProductPurchase product={product} />
+          <ul className="buybox-points">
+            <li>Paiement en Bitcoin, Ethereum ou Solana</li>
+            <li>Facture et garantie 2 ans</li>
+            <li>Expédition suivie depuis la Belgique</li>
+          </ul>
+        </aside>
       </div>
 
       <div className="product-details">

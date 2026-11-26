@@ -2,100 +2,146 @@ import Link from "next/link";
 import { Faq } from "@/components/faq";
 import { Price } from "@/components/price";
 import { ProductCard } from "@/components/product-card";
+import { ProductMedia } from "@/components/product-media";
 import { getFeatured, getProduct, products } from "@/lib/products";
 
-const TRUST = [
-  {
-    title: "Neuf, jamais utilisé",
-    text: "Emballage d'origine et facture fournie.",
-  },
-  {
-    title: "Paiement crypto",
-    text: "Bitcoin, Ethereum ou Solana. Pas de données bancaires.",
-  },
-  {
-    title: "Livraison suivie",
-    text: "France, Belgique, Suisse et Canada.",
-  },
-  {
-    title: "Garantie 2 ans",
-    text: "Pièces et main-d'œuvre. Support par e-mail.",
-  },
-];
+const manettes = products.filter((product) => product.category === "manettes").slice(0, 4);
+const pcs = products.filter((product) => product.category === "pc");
+const scooter = products.find((product) => product.category === "scooters");
+const vega = getProduct("pc-vega") ?? pcs[0];
+const featured = products.filter((product) => product.category !== "pc");
 
 export default function HomePage() {
-  const featured = getFeatured().filter((product) => product.category !== "pc").slice(0, 4);
-  const pcs = products.filter((product) => product.category === "pc");
-  const vega = getProduct("pc-vega") ?? pcs[0];
-
   return (
     <>
-      <section className="hero container">
-        <div className="hero-copy">
-          <p className="eyebrow">Manettes · PC assemblés · Mobilité</p>
-          <h1>
-            Le matériel de jeu,
-            <br />
-            payé en crypto.
-          </h1>
-          <p className="hero-lead">
-            Manettes PS5 et Xbox, PC montés à la main, trottinettes électriques. Du matériel neuf,
-            expédié depuis la Belgique vers la France, la Suisse et le Canada. Paiement en Bitcoin,
-            Ethereum ou Solana.
-          </p>
-          <div className="hero-actions">
-            <Link href="/boutique" className="btn btn-primary">
-              Voir la boutique
-            </Link>
-            <Link href="/boutique?categorie=pc" className="btn btn-outline">
-              Les PC assemblés
-            </Link>
-          </div>
-          <ul className="hero-points">
-            <li>Neuf et scellé</li>
-            <li>Facture fournie</li>
-            <li>Garantie 2 ans</li>
-          </ul>
-        </div>
-
-        {vega ? (
-          <aside className="hero-card">
-            <div className="hero-card-top">
-              <span className="mono">Configuration 01</span>
-              <span className="hero-badge">En stock</span>
-            </div>
-            <h2>{vega.name}</h2>
-            <p className="hero-card-sub">Ryzen 5 7500X3D · RX 9070 XT 16 Go</p>
-            <dl className="hero-specs">
-              {vega.highlights?.map((spec) => (
-                <div key={spec.label}>
-                  <dt>{spec.label}</dt>
-                  <dd>{spec.value}</dd>
-                </div>
-              ))}
-            </dl>
-            <div className="hero-card-foot">
-              <Price eur={vega.price} size="lg" />
-              <Link href={`/produit/${vega.slug}`} className="btn btn-light">
-                Voir la fiche
+      <section className="hero-banner">
+        <div className="container hero-banner-inner">
+          <div className="hero-banner-copy">
+            <p className="hero-kicker">Cryptshop · Paiement crypto</p>
+            <h1>
+              Le matériel de jeu,
+              <br />
+              payé en crypto.
+            </h1>
+            <p>
+              Manettes PS5 et Xbox, PC montés à la main, trottinettes électriques. Du matériel neuf,
+              expédié depuis la Belgique vers la France, la Suisse et le Canada. Paiement en Bitcoin,
+              Ethereum ou Solana.
+            </p>
+            <div className="hero-actions">
+              <Link href="/boutique" className="btn btn-primary btn-lg">
+                Découvrir la boutique
+              </Link>
+              <Link href="/boutique?categorie=pc" className="btn btn-ghost btn-lg">
+                Les PC assemblés
               </Link>
             </div>
-          </aside>
-        ) : null}
-      </section>
-
-      <section className="trust">
-        <div className="container trust-grid">
-          {TRUST.map((item) => (
-            <div key={item.title}>
-              <h2>{item.title}</h2>
-              <p>{item.text}</p>
+            <div className="hero-chips">
+              <span>BTC · ETH · SOL</span>
+              <span>Livraison FR · BE · CH · CA</span>
+              <span>Neuf et scellé</span>
             </div>
-          ))}
+          </div>
+
+          {vega ? (
+            <aside className="hero-banner-card">
+              <div className="hero-card-top">
+                <span className="mono">Configuration 01</span>
+                <span className="hero-badge">En stock</span>
+              </div>
+              <h2>{vega.name}</h2>
+              <p className="hero-card-sub">Ryzen 5 7500X3D · RX 9070 XT 16 Go</p>
+              <dl className="hero-specs">
+                {vega.highlights?.map((spec) => (
+                  <div key={spec.label}>
+                    <dt>{spec.label}</dt>
+                    <dd>{spec.value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="hero-card-foot">
+                <Price eur={vega.price} size="lg" />
+                <Link href={`/produit/${vega.slug}`} className="btn btn-primary">
+                  Voir la fiche
+                </Link>
+              </div>
+            </aside>
+          ) : null}
         </div>
       </section>
 
-      <section className="section container">
+      <div className="container home-cards">
+        <section className="home-card">
+          <h2>Manettes</h2>
+          <div className="mini-grid">
+            {manettes.map((product) => (
+              <Link key={product.slug} href={`/produit/${product.slug}`} className="mini-tile">
+                <ProductMedia src={product.image} name={product.name} brand={product.brand} />
+                <span>{product.name}</span>
+              </Link>
+            ))}
+          </div>
+          <Link href="/boutique?categorie=manettes" className="home-card-link">
+            Voir plus
+          </Link>
+        </section>
+
+        <section className="home-card">
+          <h2>PC assemblés</h2>
+          <div className="mini-grid">
+            {pcs.map((product) => (
+              <Link key={product.slug} href={`/produit/${product.slug}`} className="mini-tile">
+                <ProductMedia src={product.image} name={product.name} brand={product.brand} />
+                <span>{product.name}</span>
+              </Link>
+            ))}
+          </div>
+          <Link href="/boutique?categorie=pc" className="home-card-link">
+            Voir plus
+          </Link>
+        </section>
+
+        <section className="home-card">
+          <h2>Mobilité</h2>
+          <div className="mini-grid">
+            {scooter ? (
+              <Link href={`/produit/${scooter.slug}`} className="mini-tile">
+                <ProductMedia src={scooter.image} name={scooter.name} brand={scooter.brand} />
+                <span>{scooter.name}</span>
+              </Link>
+            ) : null}
+          </div>
+          <p className="product-tagline" style={{ marginTop: 10 }}>
+            Trottinette électrique 1 000 W, jusqu&apos;à 80 km d&apos;autonomie.
+          </p>
+          <Link href="/boutique?categorie=scooters" className="home-card-link">
+            Voir plus
+          </Link>
+        </section>
+
+        <section className="home-card">
+          <h2>Paiement crypto</h2>
+          <div className="crypto-mini">
+            <div className="crypto-mini-row">
+              <strong>Bitcoin</strong>
+              <span>BTC · réseau Bitcoin</span>
+            </div>
+            <div className="crypto-mini-row">
+              <strong>Ethereum</strong>
+              <span>ETH · réseau ERC-20</span>
+            </div>
+            <div className="crypto-mini-row">
+              <strong>Solana</strong>
+              <span>SOL · réseau Solana</span>
+            </div>
+          </div>
+          <Link href="/paiement" className="home-card-link">
+            En savoir plus
+          </Link>
+        </section>
+      </div>
+
+      <section className="home-section container">
         <div className="section-head">
           <div>
             <p className="eyebrow">Sélection</p>
@@ -112,7 +158,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="pc-section">
+      <section className="pc-band">
         <div className="container">
           <div className="section-head section-head-light">
             <div>
@@ -144,7 +190,7 @@ export default function HomePage() {
                 </dl>
                 <div className="pc-foot">
                   <Price eur={pc.price} size="lg" />
-                  <Link href={`/produit/${pc.slug}`} className="btn btn-light">
+                  <Link href={`/produit/${pc.slug}`} className="btn btn-primary">
                     Voir la configuration
                   </Link>
                 </div>
@@ -154,48 +200,52 @@ export default function HomePage() {
 
           <p className="pc-note">
             Chaque machine est montée, câblée et testée avant expédition. Garantie 2 ans pièces et
-            main-d'œuvre.
+            main-d&apos;œuvre.
           </p>
         </div>
       </section>
 
-      <section className="section container">
-        <div className="section-head">
-          <div>
-            <p className="eyebrow">Commande</p>
-            <h2>Trois étapes, pas plus.</h2>
+      <section className="home-section container">
+        <div className="info-card">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">Commande</p>
+              <h2>Trois étapes, pas plus.</h2>
+            </div>
           </div>
-        </div>
-        <div className="steps">
-          <div>
-            <span className="step-num">01</span>
-            <h3>Choisissez</h3>
-            <p>Ajoutez vos produits au panier et indiquez votre pays de livraison.</p>
-          </div>
-          <div>
-            <span className="step-num">02</span>
-            <h3>Payez en crypto</h3>
-            <p>BTC, ETH ou SOL. Le montant est calculé au moment de la commande.</p>
-          </div>
-          <div>
-            <span className="step-num">03</span>
-            <h3>Recevez</h3>
-            <p>Expédition suivie sous 2 à 9 jours ouvrés selon la destination.</p>
+          <div className="steps">
+            <div>
+              <span className="step-num">1</span>
+              <h3>Choisissez</h3>
+              <p>Ajoutez vos produits au panier et indiquez votre pays de livraison.</p>
+            </div>
+            <div>
+              <span className="step-num">2</span>
+              <h3>Payez en crypto</h3>
+              <p>BTC, ETH ou SOL. Le montant est calculé au moment de la commande.</p>
+            </div>
+            <div>
+              <span className="step-num">3</span>
+              <h3>Recevez</h3>
+              <p>Expédition suivie sous 2 à 9 jours ouvrés selon la destination.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="section container">
-        <div className="section-head">
-          <div>
-            <p className="eyebrow">Questions fréquentes</p>
-            <h2>Avant de commander</h2>
+      <section className="home-section container">
+        <div className="info-card">
+          <div className="section-head">
+            <div>
+              <p className="eyebrow">Questions fréquentes</p>
+              <h2>Avant de commander</h2>
+            </div>
+            <Link href="/contact" className="text-link">
+              Nous écrire
+            </Link>
           </div>
-          <Link href="/contact" className="text-link">
-            Nous écrire
-          </Link>
+          <Faq />
         </div>
-        <Faq />
       </section>
 
       <section className="cta-band">
