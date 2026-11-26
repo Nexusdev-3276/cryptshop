@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
       });
       const data = (await response.json()) as { ok?: boolean; error?: string };
       if (!response.ok || !data.ok) throw new Error(data.error || "Connexion refusée.");
-      router.push("/admin");
+      window.location.href = "/admin";
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Erreur.");
     } finally {
