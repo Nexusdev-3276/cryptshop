@@ -14,9 +14,9 @@ const FALLBACK: Rates = {
     CAD: envRate("RATE_CAD", 1.56),
   },
   crypto: {
-    BTC: envRate("RATE_BTC", 95000),
-    ETH: envRate("RATE_ETH", 3200),
-    SOL: envRate("RATE_SOL", 180),
+    BTC: envRate("RATE_BTC", 55000),
+    ETH: envRate("RATE_ETH", 1550),
+    SOL: envRate("RATE_SOL", 65),
   },
   updatedAt: new Date(0).toISOString(),
   live: false,
