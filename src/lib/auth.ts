@@ -1,10 +1,28 @@
 import { cookies } from "next/headers";
+import crypto from "node:crypto";
 import { kvGet, kvSet, kvDel, randomToken, hashToken, timingSafeEqual } from "./store";
 
 export const SESSION_COOKIE = "cs_session";
 export const ADMIN_COOKIE = "cs_admin";
 export const SESSION_TTL = 60 * 60 * 24 * 30; // 30 days
 export const ADMIN_TTL = 60 * 60 * 8; // 8 hours
+
+const ADMIN_SIGNING_SECRET = process.env.ADMIN_SECRET || "dev-admin-secret-change-me";
+
+function signAdminSession(expiresAt: number) {
+  const payload = `admin:${expiresAt}`;
+  const sig = crypto.createHmac("sha256", ADMIN_SIGNING_SECRET).update(payload).digest("hex");
+  return `${expiresAt}.${sig}`;
+}
+
+function verifyAdminSession(value: string): boolean {
+  const [expStr, sig] = value.split(".");
+  const expiresAt = Number(expStr);
+  if (!expiresAt || !sig) return false;
+  if (Date.now() > expiresAt) return false;
+  const expected = crypto.createHmac("sha256", ADMIN_SIGNING_SECRET).update(`admin:${expiresAt}`).digest("hex");
+  return timingSafeEqual(sig, expected);
+}
 
 export async function createAccountSession(accountHash: string) {
   const sessionId = randomToken(24);
@@ -28,23 +46,19 @@ export async function destroySession() {
 }
 
 export async function createAdminSession() {
-  const sessionId = randomToken(24);
-  await kvSet(`adminsession:${sessionId}`, { createdAt: new Date().toISOString() }, ADMIN_TTL);
-  return sessionId;
+  const expiresAt = Date.now() + ADMIN_TTL * 1000;
+  return signAdminSession(expiresAt);
 }
 
 export async function isAdminSession(): Promise<boolean> {
   const cookieStore = await cookies();
-  const sessionId = cookieStore.get(ADMIN_COOKIE)?.value;
-  if (!sessionId) return false;
-  const session = await kvGet<{ createdAt: string }>(`adminsession:${sessionId}`);
-  return Boolean(session);
+  const value = cookieStore.get(ADMIN_COOKIE)?.value;
+  if (!value) return false;
+  return verifyAdminSession(value);
 }
 
 export async function destroyAdminSession() {
   const cookieStore = await cookies();
-  const sessionId = cookieStore.get(ADMIN_COOKIE)?.value;
-  if (sessionId) await kvDel(`adminsession:${sessionId}`);
   cookieStore.delete(ADMIN_COOKIE);
 }
 
